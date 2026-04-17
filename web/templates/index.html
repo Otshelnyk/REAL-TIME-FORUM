@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Forum</title>
+  <link rel="icon" type="image/png" href="/static/favicon.png?v=2">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/static/css/forum.css">
+  <link rel="stylesheet" href="/static/css/spa.css">
+</head>
+<body>
+  <div id="root">
+    <div id="auth-screen" class="auth-screen hidden">
+      <div class="auth-brand">
+        <div class="auth-brand-shield">V</div>
+        <div class="auth-brand-title">VikingForum</div>
+        <div class="auth-brand-subtitle">RECIPE: Warriors of the Digital Age</div>
+      </div>
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab active" data-tab="login">Enter Hall</button>
+        <button type="button" class="auth-tab" data-tab="register">Join Clan</button>
+      </div>
+      <div id="auth-error" class="auth-error hidden"></div>
+      <form id="login-form" class="auth-form">
+        <label class="auth-field-label" for="login-input">Nickname or Email</label>
+        <input id="login-input" type="text" name="login" placeholder="ThorOdinson or thor@asgard.no" required>
+        <label class="auth-field-label" for="login-password-input">Secret Rune (Password)</label>
+        <input id="login-password-input" type="password" name="password" placeholder="********" required>
+        <button type="submit">Enter the Mead Hall</button>
+        <div class="auth-form-foot">No seat at the table yet? <button type="button" class="auth-inline-switch" data-tab-switch="register">Join the Clan</button></div>
+      </form>
+      <form id="register-form" class="auth-form hidden">
+        <div class="auth-two-col">
+          <div class="auth-field-hint">
+            <label class="auth-field-label" for="reg-first-name">First Name</label>
+            <input id="reg-first-name" type="text" name="first_name" placeholder="Erik" required minlength="1" maxlength="50">
+            <span class="auth-hint">1-50 characters</span>
+          </div>
+          <div class="auth-field-hint">
+            <label class="auth-field-label" for="reg-last-name">Last Name</label>
+            <input id="reg-last-name" type="text" name="last_name" placeholder="Bloodaxe" required minlength="1" maxlength="50">
+            <span class="auth-hint">1-50 characters</span>
+          </div>
+        </div>
+        <label class="auth-field-label" for="reg-nickname">Warrior Name (Nickname)</label>
+        <input id="reg-nickname" type="text" name="nickname" placeholder="ErikTheRed" required minlength="2" maxlength="30">
+        <label class="auth-field-label" for="reg-email">Email Scroll</label>
+        <input id="reg-email" type="email" name="email" placeholder="erik@northsea.no" required>
+        <div class="auth-two-col">
+          <div class="auth-field-hint">
+            <label class="auth-field-label" for="reg-age">Age (Winters)</label>
+            <input id="reg-age" type="number" name="age" placeholder="25" required min="1" max="150">
+          </div>
+          <div class="auth-field-hint">
+            <label class="auth-field-label" for="reg-gender">Gender</label>
+            <select id="reg-gender" name="gender" class="auth-select">
+              <option value="">Select</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+          </div>
+        </div>
+        <label class="auth-field-label" for="reg-password">Secret Rune (Password)</label>
+        <input id="reg-password" type="password" name="password" placeholder="Min. 6 characters" required minlength="6">
+        <label class="auth-field-label" for="reg-confirm-password">Confirm Rune</label>
+        <input id="reg-confirm-password" type="password" name="confirm_password" placeholder="Repeat password" required minlength="6">
+        <button type="submit">Claim Your Seat</button>
+        <div class="auth-form-foot">Already a warrior? <button type="button" class="auth-inline-switch" data-tab-switch="login">Enter the Hall</button></div>
+      </form>
+    </div>
+
+    <div id="app-shell" class="app-shell hidden">
+      <header class="app-header">
+        <a href="/" class="app-logo">Forum</a>
+        <div class="app-header-right">
+          <button type="button" class="avatar-button" id="avatar-change-btn" title="Change avatar">
+            <img id="header-avatar-img" class="header-avatar hidden" alt="avatar">
+            <span id="header-avatar-fallback" class="header-avatar header-avatar-fallback">?</span>
+          </button>
+          <input type="file" id="avatar-input" accept="image/png,image/jpeg,image/gif,image/webp" class="hidden">
+          <div class="notifications-wrap">
+            <button type="button" class="notif-btn" id="notif-btn" title="Notifications">
+              <span class="notif-icon">🔔</span>
+              <span class="notif-badge hidden" id="notif-badge">0</span>
+            </button>
+            <div class="notif-panel hidden" id="notif-panel">
+              <div class="notif-panel-head">
+                <strong>Notifications</strong>
+                <button type="button" class="notif-read-all" id="notif-read-all">Mark all read</button>
+              </div>
+              <div class="notif-list" id="notif-list"></div>
+            </div>
+          </div>
+          <span class="user-name" id="header-username"></span>
+          <a href="/create" class="btn-header">Create Post</a>
+          <button type="button" class="btn-header btn-logout" id="btn-logout">Logout</button>
+        </div>
+      </header>
+
+      <div class="app-layout">
+        <main id="main-content" class="main-content">
+          <div id="page-feed" class="page hidden">
+            <div class="category-filter" id="category-filter"></div>
+            <div id="feed-posts"></div>
+            <div id="feed-pagination"></div>
+          </div>
+          <div id="page-post" class="page hidden">
+            <div id="post-detail-content"></div>
+            <div id="post-detail-comments"></div>
+            <form id="comment-form" class="comment-form hidden">
+              <textarea name="comment" placeholder="Add a comment..." rows="2" maxlength="500"></textarea>
+              <button type="submit">Post</button>
+            </form>
+          </div>
+          <div id="page-create" class="page hidden">
+            <form id="create-post-form">
+              <input type="text" name="title" placeholder="Title" required maxlength="200">
+              <textarea name="content" placeholder="Content" required></textarea>
+              <div id="create-post-categories" class="create-categories"></div>
+              <button type="submit">Create Post</button>
+            </form>
+          </div>
+          <div id="page-error" class="page hidden">
+            <div class="app-error-card">
+              <div id="app-error-code" class="app-error-code">Ошибка</div>
+              <h2 id="app-error-title" class="app-error-title">Что-то пошло не так</h2>
+              <p id="app-error-message" class="app-error-message">Попробуйте позже.</p>
+              <div class="app-error-actions">
+                <button id="app-error-home" type="button" class="btn-header">Вернуться к ленте</button>
+                <button id="app-error-back" type="button" class="btn-header">Назад</button>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <aside id="pm-sidebar" class="pm-sidebar">
+          <h3>Messages</h3>
+          <div id="pm-conversations" class="pm-conversations"></div>
+        </aside>
+      </div>
+
+      <div id="pm-chat-panel" class="pm-chat-panel hidden">
+        <div class="pm-chat-header">
+          <span id="pm-chat-with-name"></span>
+          <div class="pm-chat-header-actions">
+            <button type="button" class="pm-chat-header-btn" id="pm-chat-reset" title="Сбросить позицию">↺</button>
+            <button type="button" class="pm-chat-close pm-chat-header-btn" id="pm-chat-close">&times;</button>
+          </div>
+        </div>
+        <div id="pm-messages" class="pm-messages">
+          <div id="pm-messages-load-more" class="pm-load-more hidden">
+            <button type="button" id="pm-load-more-btn">Load older messages</button>
+          </div>
+          <div id="pm-messages-list"></div>
+        </div>
+        <form id="pm-send-form" class="pm-send-form">
+          <input type="hidden" id="pm-recipient-id" name="to_id">
+          <input type="text" name="content" placeholder="Type a message..." maxlength="2000" required>
+          <button type="submit">Send</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script src="/static/js/app-core.js"></script>
+  <script src="/static/js/error.js"></script>
+  <script src="/static/js/auth.js"></script>
+  <script src="/static/js/posts.js"></script>
+  <script src="/static/js/messages.js"></script>
+  <script src="/static/js/notifications.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
